@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Xinyu Li" />
+
+<meta name="date" content="2023-12-03" />
+
+<title>Introduction to finalwork</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Introduction to finalwork</h1>
+<h4 class="author">Xinyu Li</h4>
+<h4 class="date">2023-12-03</h4>
+
+
+
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p><strong>finalwork</strong> is an R package that implements part of
+the simulation section of a nonlinear missing data completion algorithm
+called GFM-TW. It includes two Poisson data simulation generation
+functions ( <strong>DGP1</strong> , <strong>DGP2</strong> ), which are
+used to generate Poisson data without and with intercepts, a function (
+<strong>DGP_miss</strong> ) that simulates the missing data algorithm,
+and a Poisson version of the GFM-TW algorithm ( <strong>GFM_TW</strong>
+), which is used to solve the problem of Poisson data completion with
+missing values, and a Rcpp function ( <strong>RMSEC</strong> ) to
+calculate the RMSE indicator.</p>
+</div>
+<div id="dgp-functions" class="section level2">
+<h2>DGP functions</h2>
+<p>The function <strong>DGP1</strong> is used to simulate the random
+number generation process of the following data:<br />
+<span class="math display">\[
+\begin{aligned}
+X_{ij}&amp;\sim Pois(exp(z_{ij})),\
+z_{ij}=\alpha_{i}^{\prime}\gamma_{j},i=1,\dots,N,\ j=1,\dots,P  \\
+\alpha_{i}&amp;=(\alpha_{i1},1,\alpha_{i2})^{\prime},\ \alpha_{i1}\sim
+U(0,1),\ \alpha_{i2}\sim N_{R_2}(0,I_{R_2})\\
+\gamma_{j}&amp;=(1,\gamma_{j1},\gamma_{j2})^{\prime},\ \gamma_{j1}\sim
+U(0,1),\ \gamma_{j2}\sim N_{R_2}(0,I_{R_2}) \\
+\end{aligned}
+\]</span></p>
+<p>The source R code for <em>DGP1</em> is as follows:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>DGP1<span class="ot">&lt;-</span><span class="cf">function</span>(N,P,R2){</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  X<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">rep</span>(<span class="dv">0</span>,N<span class="sc">*</span>P),<span class="at">nrow=</span>N)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">#alpha~(U(0,1),1,alphai2)</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  Alpha<span class="ot">&lt;-</span><span class="fu">cbind</span>(<span class="fu">runif</span>(N),<span class="fu">rep</span>(<span class="dv">1</span>,N),<span class="fu">mvrnorm</span>(N,<span class="fu">rep</span>(<span class="dv">0</span>,R2),<span class="at">Sigma=</span><span class="fu">diag</span>(R2))) </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">#gamma~(1,U(0,1),alphai2)</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  Gamma<span class="ot">&lt;-</span><span class="fu">cbind</span>(<span class="fu">rep</span>(<span class="dv">1</span>,P),<span class="fu">runif</span>(P),<span class="fu">mvrnorm</span>(P,<span class="fu">rep</span>(<span class="dv">0</span>,R2),<span class="at">Sigma=</span><span class="fu">diag</span>(R2))) </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  Z<span class="ot">&lt;-</span><span class="fu">exp</span>(Alpha<span class="sc">%*%</span><span class="fu">t</span>(Gamma))</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  X<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">rpois</span>(N<span class="sc">*</span>P,<span class="at">lambda=</span>Z),N,P)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(X)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>The above code simulates generating Poisson data without intercept
+terms with <span class="math inline">\(R_2+2\)</span> factors.</p>
+<p>The function <strong>DGP2</strong> is used to simulate the random
+number generation process of the following data:</p>
+<p><span class="math display">\[
+\begin{aligned}
+X_{ij}&amp;\sim Pois(exp(z_{ij})),\
+z_{ij}=\alpha_{i}^{\prime}\gamma_{j}+\mu_{j}  \\
+\alpha_{i}&amp;=(\alpha_{i1},\dots,\alpha_{iR_2}),\alpha_{ik}\sim
+N(0,0.5^2), \ i.i.d.,k=1,\dots,R_2\\
+\gamma_{j}&amp;\sim N_{R_2}(1,I_{R_2}) \\
+\mu_{j}&amp;\sim 0.5U(0,1),j=1,\dots,p
+\end{aligned}
+\]</span></p>
+<p>The source R code for <em>DGP2</em> is as follows:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>DGP2<span class="ot">&lt;-</span><span class="cf">function</span>(N,P,R2){</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  X<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">rep</span>(<span class="dv">0</span>,N<span class="sc">*</span>P),<span class="at">nrow=</span>N)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  Alpha<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">rnorm</span>(N<span class="sc">*</span>R2,<span class="dv">0</span>,<span class="fl">0.5</span>),<span class="at">nrow=</span>N)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  Gamma<span class="ot">&lt;-</span><span class="fu">mvrnorm</span>(P,<span class="fu">rep</span>(<span class="dv">1</span>,R2),<span class="at">Sigma=</span><span class="fu">diag</span>(R2))</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  mu<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fl">0.5</span><span class="sc">*</span><span class="fu">runif</span>(P),N,P,<span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  Z<span class="ot">&lt;-</span><span class="fu">exp</span>(Alpha<span class="sc">%*%</span><span class="fu">t</span>(Gamma)<span class="sc">+</span>mu)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  X<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">rpois</span>(N<span class="sc">*</span>P,<span class="at">lambda=</span>Z),N,P)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(X)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>The above code simulates generating Poisson data with intercept terms
+with <span class="math inline">\(R_2\)</span> factors.</p>
+</div>
+<div id="missing-mechanism-setting" class="section level2">
+<h2>Missing mechanism setting</h2>
+<p>I set the missing mechanism to be completely random, but the number
+of missing rows and columns is fixed, denoted by <span class="math inline">\(n_m\)</span> and <span class="math inline">\(p_m\)</span>. Specifically, I scrambled the row
+and column indexes of the data and extracted the <span class="math inline">\(n_m\)</span> and <span class="math inline">\(p_m\)</span> columns as missing rows and columns,
+and set random missing in the <span class="math inline">\(n_m \times
+p_m\)</span> submatrix composed of these rows and columns. The total
+missing data is about <span class="math inline">\(1/4 n_m \times
+p_m\)</span>.</p>
+<p>The source R code for <em>DGP_miss</em> is as follows:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>DGP_miss<span class="ot">&lt;-</span><span class="cf">function</span>(Nm,Pm,X){</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  N<span class="ot">&lt;-</span><span class="fu">nrow</span>(X);P<span class="ot">&lt;-</span><span class="fu">ncol</span>(X)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  row_index<span class="ot">&lt;-</span><span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>N,Nm,<span class="at">replace=</span><span class="cn">FALSE</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  col_index<span class="ot">&lt;-</span><span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>P,Pm,<span class="at">replace=</span><span class="cn">FALSE</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  X_miss<span class="ot">&lt;-</span>X </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(rindex <span class="cf">in</span> row_index){ <span class="co"># Construct column missing  </span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    num<span class="ot">&lt;-</span><span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>(Pm<span class="sc">/</span><span class="dv">4</span>),<span class="at">size=</span><span class="dv">1</span>,<span class="at">replace=</span><span class="cn">FALSE</span>) <span class="co">#the num of missing columns in row rindex</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    col_missindex<span class="ot">&lt;-</span><span class="fu">sample</span>(col_index,<span class="at">size=</span>num,<span class="at">replace =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    X_miss[rindex,col_missindex]<span class="ot">&lt;-</span><span class="cn">NA</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(cindex <span class="cf">in</span> col_index){ <span class="co"># Construct row missing</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    num<span class="ot">&lt;-</span><span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>(Nm<span class="sc">/</span><span class="dv">4</span>),<span class="at">size=</span><span class="dv">1</span>,<span class="at">replace=</span><span class="cn">FALSE</span>) <span class="co">#the num of missing rows in column cindex</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    row_missindex<span class="ot">&lt;-</span><span class="fu">sample</span>(row_index,<span class="at">size=</span>num,<span class="at">replace =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    X_miss[row_missindex,cindex]<span class="ot">&lt;-</span><span class="cn">NA</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(X_miss)   </span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+</div>
+<div id="gfm-tw-algorithm" class="section level2">
+<h2>GFM-TW algorithm</h2>
+<p>The following function is used to implement our proposed nonlinear
+missing data completion algorithm. Here I only show the part of the
+algorithm for Poisson data.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>GFM_TW<span class="ot">&lt;-</span><span class="cf">function</span>(X_miss,num_factor,<span class="at">type=</span><span class="st">&quot;poission&quot;</span>,</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">detail=</span><span class="st">&quot;no intercept&quot;</span>){</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  N<span class="ot">&lt;-</span><span class="fu">nrow</span>(X_miss);P<span class="ot">&lt;-</span><span class="fu">ncol</span>(X_miss)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">#mark matrix,mij=1(TRUE) denotes missing</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  missing <span class="ot">&lt;-</span> <span class="fu">is.na</span>(X_miss)        </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">#row index with non missing values</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  goodN <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(<span class="fu">is.na</span>(X_miss)) <span class="sc">==</span> <span class="dv">0</span>   </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">#column index with non missing values</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  goodP <span class="ot">&lt;-</span> <span class="fu">colSums</span>(<span class="fu">is.na</span>(X_miss)) <span class="sc">==</span> <span class="dv">0</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  X_TALL<span class="ot">&lt;-</span>X_miss[,goodP]</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  X_WIDE<span class="ot">&lt;-</span>X_miss[goodN,]</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="co">#data is the type of poisson</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(type<span class="sc">==</span><span class="st">&quot;poisson&quot;</span>){</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(detail<span class="sc">==</span><span class="st">&quot;no intercept&quot;</span>){</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>      <span class="co">#use TALL to estimate factors</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>      gfm_TALL <span class="ot">&lt;-</span> <span class="fu">gfm</span>(<span class="fu">list</span>(X_TALL), <span class="st">&#39;poisson&#39;</span>,  <span class="at">q=</span>num_factor, <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>      H_hat1<span class="ot">&lt;-</span>gfm_TALL<span class="sc">$</span>hH</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>      <span class="co">#use WIDE to estimate loadings and intercept</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>      gfm_WIDE <span class="ot">&lt;-</span> <span class="fu">gfm</span>(<span class="fu">list</span>(X_WIDE), <span class="st">&#39;poisson&#39;</span>,  <span class="at">q=</span>num_factor, <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>      B_hat1<span class="ot">&lt;-</span>gfm_WIDE<span class="sc">$</span>hB</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>      mu_hat1<span class="ot">&lt;-</span>gfm_WIDE<span class="sc">$</span>hmu</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>      Mu_hat1<span class="ot">&lt;-</span><span class="fu">t</span>(<span class="fu">matrix</span>(<span class="fu">rep</span>(mu_hat1,N),<span class="at">ncol=</span>N))</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>      <span class="co">#the first estimate, take the rounded value of the mean as an estimate</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>      X_hat1<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">rep</span>(<span class="dv">0</span>,N<span class="sc">*</span>P),<span class="at">nrow=</span>N)</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>      X_hat1<span class="ot">&lt;-</span>H_hat1<span class="sc">%*%</span><span class="fu">t</span>(B_hat1)<span class="sc">+</span>Mu_hat1</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>      X_hat1<span class="ot">&lt;-</span><span class="fu">round</span>(<span class="fu">exp</span>(X_hat1))</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>      <span class="co">#impute the matrix</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>      X_hat_tmp<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">rep</span>(<span class="fu">t</span>(X_miss),<span class="dv">1</span>),<span class="at">ncol=</span>P,<span class="at">byrow=</span><span class="cn">TRUE</span>)</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>      X_hat_tmp[missing]<span class="ot">&lt;-</span>X_hat1[missing]</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>      <span class="co">#reestimate</span></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>      gfm_ALL<span class="ot">&lt;-</span><span class="fu">gfm</span>(<span class="fu">list</span>(X_hat_tmp), <span class="st">&#39;poisson&#39;</span>,  <span class="at">q=</span>num_factor, <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>      H_hat2<span class="ot">&lt;-</span>gfm_ALL<span class="sc">$</span>hH</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>      B_hat2<span class="ot">&lt;-</span>gfm_ALL<span class="sc">$</span>hB</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>      mu_hat2<span class="ot">&lt;-</span>gfm_ALL<span class="sc">$</span>hmu</span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>      Mu_hat2<span class="ot">&lt;-</span><span class="fu">t</span>(<span class="fu">matrix</span>(<span class="fu">rep</span>(mu_hat2,N),<span class="at">ncol=</span>N))</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>      X_hat2<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">rep</span>(<span class="dv">0</span>,N<span class="sc">*</span>P),<span class="at">nrow=</span>N)</span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>      X_hat2<span class="ot">&lt;-</span>H_hat2<span class="sc">%*%</span><span class="fu">t</span>(B_hat2)<span class="sc">+</span>Mu_hat2</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>      X_hat2<span class="ot">&lt;-</span><span class="fu">round</span>(<span class="fu">exp</span>(X_hat2))</span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>      X_complete<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">rep</span>(<span class="fu">t</span>(X_miss),<span class="dv">1</span>),<span class="at">ncol=</span>P,<span class="at">byrow=</span><span class="cn">TRUE</span>)</span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>      X_complete[missing]<span class="ot">&lt;-</span>X_hat2[missing]</span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(detail<span class="sc">==</span><span class="st">&quot;intercept&quot;</span>){</span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>      <span class="co">#use TALL to estimate factors</span></span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>      gfm_TALL <span class="ot">&lt;-</span> <span class="fu">gfm</span>(<span class="fu">list</span>(X_TALL), <span class="st">&#39;poisson&#39;</span>,  <span class="at">q=</span>num_factor, <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>      H_hat1<span class="ot">&lt;-</span>gfm_TALL<span class="sc">$</span>hH</span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>      <span class="co">#use WIDE to estimate loadings and intercept</span></span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>      gfm_WIDE <span class="ot">&lt;-</span> <span class="fu">gfm</span>(<span class="fu">list</span>(X_WIDE), <span class="st">&#39;poisson&#39;</span>,  <span class="at">q=</span>num_factor, <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>      B_hat1<span class="ot">&lt;-</span>gfm_WIDE<span class="sc">$</span>hB</span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>      mu_hat1<span class="ot">&lt;-</span>gfm_WIDE<span class="sc">$</span>hmu</span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>      Mu_hat1<span class="ot">&lt;-</span><span class="fu">t</span>(<span class="fu">matrix</span>(<span class="fu">rep</span>(mu_hat1,N),<span class="at">ncol=</span>N))</span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>      <span class="co">#the first estimate, take the rounded value of the mean as an estimate</span></span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>      X_hat1<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">rep</span>(<span class="dv">0</span>,N<span class="sc">*</span>P),<span class="at">nrow=</span>N)</span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>      X_hat1<span class="ot">&lt;-</span>H_hat1<span class="sc">%*%</span><span class="fu">t</span>(B_hat1)<span class="sc">+</span>Mu_hat1</span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>      X_hat1<span class="ot">&lt;-</span><span class="fu">round</span>(<span class="fu">exp</span>(X_hat1))</span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>      X_hat_tmp<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">rep</span>(<span class="fu">t</span>(X_miss),<span class="dv">1</span>),<span class="at">ncol=</span>P,<span class="at">byrow=</span><span class="cn">TRUE</span>)</span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>      X_hat_tmp[missing]<span class="ot">&lt;-</span>X_hat1[missing]</span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>      <span class="co">#reestimate</span></span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>      gfm_ALL<span class="ot">&lt;-</span><span class="fu">gfm</span>(<span class="fu">list</span>(X_hat_tmp), <span class="st">&#39;poisson&#39;</span>,  <span class="at">q=</span>num_factor, <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>      H_hat2<span class="ot">&lt;-</span>gfm_ALL<span class="sc">$</span>hH</span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>      B_hat2<span class="ot">&lt;-</span>gfm_ALL<span class="sc">$</span>hB</span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>      mu_hat2<span class="ot">&lt;-</span>gfm_ALL<span class="sc">$</span>hmu</span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>      Mu_hat2<span class="ot">&lt;-</span><span class="fu">t</span>(<span class="fu">matrix</span>(<span class="fu">rep</span>(mu_hat2,N),<span class="at">ncol=</span>N))</span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a>      X_hat2<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">rep</span>(<span class="dv">0</span>,N<span class="sc">*</span>P),<span class="at">nrow=</span>N)</span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>      X_hat2<span class="ot">&lt;-</span>H_hat2<span class="sc">%*%</span><span class="fu">t</span>(B_hat2)<span class="sc">+</span>Mu_hat2</span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a>      X_hat2<span class="ot">&lt;-</span><span class="fu">round</span>(<span class="fu">exp</span>(X_hat2))</span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a>      X_complete<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">rep</span>(<span class="fu">t</span>(X_miss),<span class="dv">1</span>),<span class="at">ncol=</span>P,<span class="at">byrow=</span><span class="cn">TRUE</span>)</span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a>      X_complete[missing]<span class="ot">&lt;-</span>X_hat2[missing]</span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a>  <span class="co">#return the complete matrix</span></span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(X_complete)</span>
+<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+</div>
+<div id="evaluation-indicator" class="section level2">
+<h2>Evaluation indicator</h2>
+<p>The following is a function for calculating the RMSE metric using
+Rcpp:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>double <span class="fu">RMSEC</span>(const NumericMatrix<span class="sc">&amp;</span> Xhat, </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>             const NumericMatrix<span class="sc">&amp;</span> X,int missnum) {</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  double sum <span class="ot">=</span> <span class="dv">0</span>;</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  int nrow <span class="ot">=</span> <span class="fu">X.nrow</span>();</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  int ncol <span class="ot">=</span> <span class="fu">X.ncol</span>();</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  double rmse<span class="ot">=</span><span class="dv">0</span>;</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  double diff<span class="ot">=</span><span class="dv">0</span>;</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (int <span class="at">i =</span> <span class="dv">0</span>; i <span class="sc">&lt;</span> nrow; i<span class="sc">++</span>) {</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (int <span class="at">j =</span> <span class="dv">0</span>; j <span class="sc">&lt;</span> ncol; j<span class="sc">++</span>) {</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>      diff <span class="ot">=</span> <span class="fu">X</span>(i, j) <span class="sc">-</span> <span class="fu">Xhat</span>(i, j);</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>      sum <span class="sc">+</span><span class="er">=</span> diff <span class="sc">*</span> diff;</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  rmse<span class="ot">=</span>std<span class="sc">::</span><span class="fu">sqrt</span>(sum <span class="sc">/</span> missnum);</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  return rmse;</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>The definition of RMSE is<br />
+<span class="math display">\[
+\operatorname{RMSE}=\sqrt{\frac{1}{|\mathcal{D}|-\left|\mathcal{D}_{o}\right|}
+\sum_{(i, j) \in \mathcal{D} \mathcal{D}_{o}}\left(\widehat{X}_{i
+j}-X_{i j}\right)^{2}},
+\]</span></p>
+<p>where <span class="math inline">\(\widehat{X}_{i j}\)</span> is the
+estimate in the completed matrix <span class="math inline">\(X_{i
+j}\)</span>, <span class="math inline">\(\mathcal{D}_{o}\)</span> is a
+set containing index pairs of all observed variables, and <span class="math inline">\(|\cdot|\)</span> represents the number of elements
+in the set.</p>
+</div>
+<div id="performance-comparison" class="section level2">
+<h2>Performance comparison</h2>
+<p>The following newly defined function compares the effect of GFM-TW
+and TW algorithms (TW-sd and TW-raw, the former use the standardized
+data and the later use raw data.) on the basis of generating the same
+data matrix, and returns the imputed matrix obtained by different
+algorithms and the number of missing values.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(finalwork)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fbi)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>compare_method<span class="ot">&lt;-</span><span class="cf">function</span>(N,P,Nm,Pm,itermax,R2,<span class="at">types=</span><span class="st">&#39;poisson&#39;</span>,<span class="at">details=</span><span class="st">&quot;no intercept&quot;</span>){</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">#generate a list to reserve the result of each iter</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">#list[[iter]] contains X_true,missnum,X_complete for three methods</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  result<span class="ot">&lt;-</span><span class="fu">list</span>()</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(iter <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>itermax){</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(types<span class="sc">==</span><span class="st">&quot;poisson&quot;</span>){</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(details<span class="sc">==</span><span class="st">&quot;no intercept&quot;</span>){</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">#generate data matrix and artificially</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">#creating missing values</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        X_true<span class="ot">&lt;-</span><span class="fu">DGP1</span>(N,P,R2)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>        X_true_miss<span class="ot">&lt;-</span><span class="fu">DGP_miss</span>(Nm,Pm,X_true)</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        missnum<span class="ot">&lt;-</span><span class="fu">sum</span>(<span class="fu">is.na</span>(X_true_miss))</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        <span class="do">##GFM-TW</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        X_complete_GFMTW<span class="ot">&lt;-</span><span class="fu">GFM_TW</span>(X_true_miss,R2<span class="sc">+</span><span class="dv">2</span>,types,details)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>        <span class="do">##TW-sd</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        X_complete_TWsd<span class="ot">&lt;-</span><span class="fu">tw_apc</span>(X_true_miss,R2<span class="sc">+</span><span class="dv">2</span>,<span class="at">center=</span><span class="cn">TRUE</span>,<span class="at">standardize =</span> <span class="cn">TRUE</span>,<span class="at">re_estimate =</span> <span class="cn">TRUE</span>)<span class="sc">$</span>data</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>        X_complete_TWsd<span class="ot">&lt;-</span><span class="fu">round</span>(X_complete_TWsd)</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>        <span class="do">##TW-raw</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>        X_complete_TWraw<span class="ot">&lt;-</span><span class="fu">tw_apc</span>(X_true_miss,R2<span class="sc">+</span><span class="dv">2</span>,<span class="at">center=</span><span class="cn">FALSE</span>,<span class="at">standardize =</span> <span class="cn">FALSE</span>,<span class="at">re_estimate =</span> <span class="cn">TRUE</span>)<span class="sc">$</span>data</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>        X_complete_TWraw<span class="ot">&lt;-</span><span class="fu">round</span>(X_complete_TWraw)</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(details<span class="sc">==</span><span class="st">&quot;intercept&quot;</span>){</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>        X_true<span class="ot">&lt;-</span><span class="fu">DGP2</span>(N,P,R2)</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>        X_true_miss<span class="ot">&lt;-</span><span class="fu">DGP_miss</span>(Nm,Pm,X_true)</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>        missnum<span class="ot">&lt;-</span><span class="fu">sum</span>(<span class="fu">is.na</span>(X_true_miss))</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>        <span class="do">##GFM-TW</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>        X_complete_GFMTW<span class="ot">&lt;-</span><span class="fu">GFM_TW</span>(X_true_miss,R2,types,details)</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>        <span class="do">##TW-sd</span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>        X_complete_TWsd<span class="ot">&lt;-</span><span class="fu">tw_apc</span>(X_true_miss,R2,<span class="at">center=</span><span class="cn">TRUE</span>,<span class="at">standardize =</span> <span class="cn">TRUE</span>,<span class="at">re_estimate =</span> <span class="cn">TRUE</span>)<span class="sc">$</span>data</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>        X_complete_TWsd<span class="ot">&lt;-</span><span class="fu">round</span>(X_complete_TWsd)</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>        <span class="do">##TW-raw</span></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>        X_complete_TWraw<span class="ot">&lt;-</span><span class="fu">tw_apc</span>(X_true_miss,R2,<span class="at">center=</span><span class="cn">FALSE</span>,<span class="at">standardize =</span> <span class="cn">FALSE</span>,<span class="at">re_estimate =</span> <span class="cn">TRUE</span>)<span class="sc">$</span>data</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>        X_complete_TWraw<span class="ot">&lt;-</span><span class="fu">round</span>(X_complete_TWraw)</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>    <span class="co">#reserve results</span></span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>    result[[iter]]<span class="ot">&lt;-</span><span class="fu">list</span>(<span class="at">X_true=</span>X_true,<span class="at">missnum=</span>missnum,</span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>                         <span class="at">X_complete_GFMTW=</span>X_complete_GFMTW,</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>                         <span class="at">X_complete_TWsd=</span>X_complete_TWsd,</span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>                       <span class="at">X_complete_TWraw=</span>X_complete_TWraw)</span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(result)</span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>The following newly defined function reports the RMSE result.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(finalwork)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>report_RMSE<span class="ot">&lt;-</span><span class="cf">function</span>(res,iternum){</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  RMSE_result<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="dv">0</span>,<span class="at">nrow=</span>iternum,<span class="at">ncol=</span><span class="dv">3</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(iter <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>iternum){</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  RMSE_result[iter,<span class="dv">1</span>]<span class="ot">&lt;-</span><span class="fu">RMSEC</span>(res[[iter]]<span class="sc">$</span>X_complete_GFMTW,res[[iter]]<span class="sc">$</span>X_true,res[[iter]]<span class="sc">$</span>missnum)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  RMSE_result[iter,<span class="dv">2</span>]<span class="ot">&lt;-</span><span class="fu">RMSEC</span>(res[[iter]]<span class="sc">$</span>X_complete_TWsd,res[[iter]]<span class="sc">$</span>X_true,res[[iter]]<span class="sc">$</span>missnum)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  RMSE_result[iter,<span class="dv">3</span>]<span class="ot">&lt;-</span><span class="fu">RMSEC</span>(res[[iter]]<span class="sc">$</span>X_complete_TWraw,res[[iter]]<span class="sc">$</span>X_true,res[[iter]]<span class="sc">$</span>missnum)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(RMSE_result)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+</div>
+<div id="examples" class="section level2">
+<h2>Examples</h2>
+<div id="example1" class="section level3">
+<h3>Example1</h3>
+<p>In this example, we simulate the whole process of missing completion
+of Poisson data without intercepts. The reported matrix is a <span class="math inline">\(M \times 3\)</span> matrix, where <span class="math inline">\(M\)</span> is the iteration number.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#setting</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(finalwork)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fbi)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>iter1<span class="ot">=</span><span class="dv">10</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>N1<span class="ot">=</span><span class="dv">200</span>;P1<span class="ot">=</span><span class="dv">300</span>;R1<span class="ot">=</span><span class="dv">1</span>;Nm1<span class="ot">&lt;-</span><span class="dv">80</span>;Pm1<span class="ot">&lt;-</span><span class="dv">80</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">#simulation</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>result1<span class="ot">&lt;-</span><span class="fu">compare_method</span>(N1,P1,Nm1,Pm1,iter1,R1,<span class="st">&#39;poisson&#39;</span>,<span class="st">&#39;no intercept&#39;</span>)</span></code></pre></div>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="co">#report</span></span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>report_result<span class="ot">&lt;-</span><span class="fu">report_RMSE</span>(result1,iter1)</span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a>report_result</span></code></pre></div>
+<pre><code>##            [,1]        [,2]       [,3]
+##  [1,]  2.897076   12.656058  13.605745
+##  [2,]  2.480841    6.350800   5.288263
+##  [3,]  8.825811  122.948161  17.695471
+##  [4,]  8.368093   42.354828 163.793199
+##  [5,]  2.683036    6.441050   4.244896
+##  [6,]  2.848869    5.053932   4.894634
+##  [7,] 38.634905  928.141279 146.554946
+##  [8,] 15.010856  478.759576  37.662422
+##  [9,]  3.166623   19.449647  38.714193
+## [10,] 16.570265 1623.482539  57.342104</code></pre>
+</div>
+<div id="example2" class="section level3">
+<h3>Example2</h3>
+<p>In this example, we simulate the whole process of missing completion
+of Poisson data with intercepts. The reported matrix is a <span class="math inline">\(M \times 3\)</span> matrix, where <span class="math inline">\(M\)</span> is the iteration number.</p>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="co">#setting</span></span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>iter2<span class="ot">=</span><span class="dv">10</span></span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>N2<span class="ot">=</span><span class="dv">200</span>;P2<span class="ot">=</span><span class="dv">300</span>;R<span class="ot">=</span><span class="dv">3</span>;Nm2<span class="ot">&lt;-</span><span class="dv">80</span>;Pm2<span class="ot">&lt;-</span><span class="dv">80</span></span>
+<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a><span class="co">#simulation</span></span>
+<span id="cb71-5"><a href="#cb71-5" aria-hidden="true" tabindex="-1"></a>result1<span class="ot">&lt;-</span><span class="fu">compare_method</span>(N2,P2,Nm2,Pm2,iter2,R,<span class="st">&#39;poisson&#39;</span>,<span class="st">&#39;intercept&#39;</span>)</span></code></pre></div>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<pre><code>## Starting the varitional EM algorithm...</code></pre>
+<pre><code>## Finish the varitional EM algorithm...</code></pre>
+<div class="sourceCode" id="cb132"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb132-1"><a href="#cb132-1" aria-hidden="true" tabindex="-1"></a><span class="co">#report</span></span>
+<span id="cb132-2"><a href="#cb132-2" aria-hidden="true" tabindex="-1"></a>report_result<span class="ot">&lt;-</span><span class="fu">report_RMSE</span>(result1,iter2)</span>
+<span id="cb132-3"><a href="#cb132-3" aria-hidden="true" tabindex="-1"></a>report_result</span></code></pre></div>
+<pre><code>##            [,1]      [,2]      [,3]
+##  [1,]  2.922082 12.762373 10.554092
+##  [2,]  1.624344  3.402380  3.158471
+##  [3,]  1.929175  3.451409  4.076559
+##  [4,]  1.831842  2.396047  3.626307
+##  [5,]  1.813813  3.390958  2.986665
+##  [6,] 35.005295 63.859632 70.609584
+##  [7,] 10.180931 22.647613  8.937195
+##  [8,]  4.602945  4.693110  4.110592
+##  [9,]  1.637180  7.758022  5.256459
+## [10,]  3.321600 11.599264  8.222388</code></pre>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,17 @@
+Package: finalwork
+Type: Package
+Title: Algorithm and example functions for GFM-TW algorithm
+Version: 1.0
+Date: 2023-11-28
+Author: Xinyu Li
+Maintainer: Xinyu Li <lx20160727@mail.ustc.edu.cn>
+Description:Several R and Rcpp function are included in this package for illustration.These functions implement part of the simulation section of a nonlinear missing data completion algorithm called GFM-TW.
+License: GPL (>= 2)
+Imports: Rcpp, microbenchmark, bootstrap, boot, DAAG, GFM, fbi, datasets, coda, MASS, utils, stats,lubridate
+Suggests: knitr, rmarkdown, graphics
+LinkingTo: Rcpp
+RoxygenNote: 7.2.3
+Encoding: UTF-8
+VignetteBuilder: knitr
+URL: http://github.com/xinyuli19/finalwork
+BugReports: http://github.com/xinyuli19/finalwork/issues

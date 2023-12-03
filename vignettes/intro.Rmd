@@ -1,0 +1,316 @@
+---
+title: "Introduction to finalwork"
+author: "Xinyu Li"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to finalwork}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Overview
+
+__finalwork__ is an R package that implements part of the simulation section of a nonlinear missing data completion algorithm called GFM-TW. It includes two Poisson data simulation generation functions ( __DGP1__ , __DGP2__ ), which are used to generate Poisson data without and with intercepts, a function ( __DGP_miss__ ) that simulates the missing data algorithm, and a Poisson version of the GFM-TW algorithm ( __GFM_TW__ ), which is used to solve the problem of Poisson data completion with missing values, and a Rcpp function ( __RMSEC__ ) to calculate the RMSE indicator.
+
+## DGP functions
+
+The function __DGP1__ is used to simulate the random number generation process of the following data:   
+$$
+\begin{aligned}
+X_{ij}&\sim Pois(exp(z_{ij})),\ z_{ij}=\alpha_{i}^{\prime}\gamma_{j},i=1,\dots,N,\ j=1,\dots,P  \\
+\alpha_{i}&=(\alpha_{i1},1,\alpha_{i2})^{\prime},\ \alpha_{i1}\sim U(0,1),\ \alpha_{i2}\sim N_{R_2}(0,I_{R_2})\\
+\gamma_{j}&=(1,\gamma_{j1},\gamma_{j2})^{\prime},\ \gamma_{j1}\sim U(0,1),\ \gamma_{j2}\sim N_{R_2}(0,I_{R_2}) \\
+\end{aligned}
+$$
+
+The source R code for _DGP1_ is as follows:   
+
+```{r,eval=FALSE}
+DGP1<-function(N,P,R2){
+  X<-matrix(rep(0,N*P),nrow=N)
+  #alpha~(U(0,1),1,alphai2)
+  Alpha<-cbind(runif(N),rep(1,N),mvrnorm(N,rep(0,R2),Sigma=diag(R2))) 
+  #gamma~(1,U(0,1),alphai2)
+  Gamma<-cbind(rep(1,P),runif(P),mvrnorm(P,rep(0,R2),Sigma=diag(R2))) 
+  Z<-exp(Alpha%*%t(Gamma))
+  X<-matrix(rpois(N*P,lambda=Z),N,P)
+  return(X)
+}
+```
+
+The above code simulates generating Poisson data without intercept terms with $R_2+2$ factors.  
+
+The function __DGP2__ is used to simulate the random number generation process of the following data:   
+
+$$
+\begin{aligned}
+X_{ij}&\sim Pois(exp(z_{ij})),\ z_{ij}=\alpha_{i}^{\prime}\gamma_{j}+\mu_{j}  \\
+\alpha_{i}&=(\alpha_{i1},\dots,\alpha_{iR_2}),\alpha_{ik}\sim N(0,0.5^2), \ i.i.d.,k=1,\dots,R_2\\
+\gamma_{j}&\sim N_{R_2}(1,I_{R_2}) \\
+\mu_{j}&\sim 0.5U(0,1),j=1,\dots,p
+\end{aligned}
+$$
+
+The source R code for _DGP2_ is as follows:   
+
+```{r,eval=FALSE}
+DGP2<-function(N,P,R2){
+  X<-matrix(rep(0,N*P),nrow=N)
+  Alpha<-matrix(rnorm(N*R2,0,0.5),nrow=N)
+  Gamma<-mvrnorm(P,rep(1,R2),Sigma=diag(R2))
+  mu<-matrix(0.5*runif(P),N,P,byrow = TRUE)
+  Z<-exp(Alpha%*%t(Gamma)+mu)
+  X<-matrix(rpois(N*P,lambda=Z),N,P)
+  return(X)
+}
+```
+
+The above code simulates generating Poisson data with intercept terms with $R_2$ factors.   
+
+## Missing mechanism setting
+
+I set the missing mechanism to be completely random, but the number of missing rows and columns is fixed, denoted by $n_m$ and $p_m$. Specifically, I scrambled the row and column indexes of the data and extracted the $n_m$ and $p_m$ columns as missing rows and columns, and set random missing in the $n_m \times p_m$ submatrix composed of these rows and columns. The total missing data is about $1/4 n_m \times p_m$.
+
+The source R code for _DGP_miss_ is as follows:   
+
+```{r,eval=FALSE}
+DGP_miss<-function(Nm,Pm,X){
+  N<-nrow(X);P<-ncol(X)
+  row_index<-sample(1:N,Nm,replace=FALSE)
+  col_index<-sample(1:P,Pm,replace=FALSE)
+  X_miss<-X 
+  for(rindex in row_index){ # Construct column missing  
+    num<-sample(1:(Pm/4),size=1,replace=FALSE) #the num of missing columns in row rindex
+    col_missindex<-sample(col_index,size=num,replace = FALSE)
+    X_miss[rindex,col_missindex]<-NA
+  }
+  for(cindex in col_index){ # Construct row missing
+    num<-sample(1:(Nm/4),size=1,replace=FALSE) #the num of missing rows in column cindex
+    row_missindex<-sample(row_index,size=num,replace = FALSE)
+    X_miss[row_missindex,cindex]<-NA
+  }
+  
+  return(X_miss)   
+}
+```
+
+## GFM-TW algorithm  
+
+The following function is used to implement our proposed nonlinear missing data completion algorithm. Here I only show the part of the algorithm for Poisson data.
+
+```{r,eval=FALSE}
+GFM_TW<-function(X_miss,num_factor,type="poission",
+                 detail="no intercept"){
+  N<-nrow(X_miss);P<-ncol(X_miss)
+  #mark matrix,mij=1(TRUE) denotes missing
+  missing <- is.na(X_miss)        
+  #row index with non missing values
+  goodN <- rowSums(is.na(X_miss)) == 0   
+  #column index with non missing values
+  goodP <- colSums(is.na(X_miss)) == 0
+  X_TALL<-X_miss[,goodP]
+  X_WIDE<-X_miss[goodN,]
+  
+  #data is the type of poisson
+  if(type=="poisson"){
+    if(detail=="no intercept"){
+      #use TALL to estimate factors
+      gfm_TALL <- gfm(list(X_TALL), 'poisson',  q=num_factor, verbose = FALSE)
+      H_hat1<-gfm_TALL$hH
+      #use WIDE to estimate loadings and intercept
+      gfm_WIDE <- gfm(list(X_WIDE), 'poisson',  q=num_factor, verbose = FALSE)
+      B_hat1<-gfm_WIDE$hB
+      mu_hat1<-gfm_WIDE$hmu
+      Mu_hat1<-t(matrix(rep(mu_hat1,N),ncol=N))
+      
+      #the first estimate, take the rounded value of the mean as an estimate
+      X_hat1<-matrix(rep(0,N*P),nrow=N)
+      X_hat1<-H_hat1%*%t(B_hat1)+Mu_hat1
+      X_hat1<-round(exp(X_hat1))
+      #impute the matrix
+      X_hat_tmp<-matrix(rep(t(X_miss),1),ncol=P,byrow=TRUE)
+      X_hat_tmp[missing]<-X_hat1[missing]
+      
+      #reestimate
+      gfm_ALL<-gfm(list(X_hat_tmp), 'poisson',  q=num_factor, verbose = FALSE)
+      H_hat2<-gfm_ALL$hH
+      B_hat2<-gfm_ALL$hB
+      mu_hat2<-gfm_ALL$hmu
+      Mu_hat2<-t(matrix(rep(mu_hat2,N),ncol=N))
+      
+      X_hat2<-matrix(rep(0,N*P),nrow=N)
+      X_hat2<-H_hat2%*%t(B_hat2)+Mu_hat2
+      X_hat2<-round(exp(X_hat2))
+      X_complete<-matrix(rep(t(X_miss),1),ncol=P,byrow=TRUE)
+      X_complete[missing]<-X_hat2[missing]
+    }
+    if(detail=="intercept"){
+      #use TALL to estimate factors
+      gfm_TALL <- gfm(list(X_TALL), 'poisson',  q=num_factor, verbose = FALSE)
+      H_hat1<-gfm_TALL$hH
+      #use WIDE to estimate loadings and intercept
+      gfm_WIDE <- gfm(list(X_WIDE), 'poisson',  q=num_factor, verbose = FALSE)
+      B_hat1<-gfm_WIDE$hB
+      mu_hat1<-gfm_WIDE$hmu
+      Mu_hat1<-t(matrix(rep(mu_hat1,N),ncol=N))
+      
+      #the first estimate, take the rounded value of the mean as an estimate
+      X_hat1<-matrix(rep(0,N*P),nrow=N)
+      X_hat1<-H_hat1%*%t(B_hat1)+Mu_hat1
+      X_hat1<-round(exp(X_hat1))
+      X_hat_tmp<-matrix(rep(t(X_miss),1),ncol=P,byrow=TRUE)
+      X_hat_tmp[missing]<-X_hat1[missing]
+      
+      #reestimate
+      gfm_ALL<-gfm(list(X_hat_tmp), 'poisson',  q=num_factor, verbose = FALSE)
+      H_hat2<-gfm_ALL$hH
+      B_hat2<-gfm_ALL$hB
+      mu_hat2<-gfm_ALL$hmu
+      Mu_hat2<-t(matrix(rep(mu_hat2,N),ncol=N))
+      
+      X_hat2<-matrix(rep(0,N*P),nrow=N)
+      X_hat2<-H_hat2%*%t(B_hat2)+Mu_hat2
+      X_hat2<-round(exp(X_hat2))
+      X_complete<-matrix(rep(t(X_miss),1),ncol=P,byrow=TRUE)
+      X_complete[missing]<-X_hat2[missing]
+    }
+  }
+  
+  #return the complete matrix
+  return(X_complete)
+}
+```
+
+## Evaluation indicator
+
+The following is a function for calculating the RMSE metric using Rcpp:
+
+```{r,eval=FALSE}
+double RMSEC(const NumericMatrix& Xhat, 
+             const NumericMatrix& X,int missnum) {
+  double sum = 0;
+  int nrow = X.nrow();
+  int ncol = X.ncol();
+  double rmse=0;
+  double diff=0;
+  for (int i = 0; i < nrow; i++) {
+    for (int j = 0; j < ncol; j++) {
+      diff = X(i, j) - Xhat(i, j);
+      sum += diff * diff;
+    }
+  }
+  rmse=std::sqrt(sum / missnum);
+  return rmse;
+}
+```
+
+The definition of RMSE is    
+$$
+\operatorname{RMSE}=\sqrt{\frac{1}{|\mathcal{D}|-\left|\mathcal{D}_{o}\right|} \sum_{(i, j) \in \mathcal{D} \mathcal{D}_{o}}\left(\widehat{X}_{i j}-X_{i j}\right)^{2}},
+$$
+
+where $\widehat{X}_{i j}$ is the estimate in the completed matrix $X_{i j}$, $\mathcal{D}_{o}$ is a set containing index pairs of all observed variables, and $|\cdot|$ represents the number of elements in the set.
+
+
+## Performance comparison  
+
+The following newly defined function compares the effect of GFM-TW and TW algorithms (TW-sd and TW-raw, the former use the standardized data and the later use raw data.) on the basis of generating the same data matrix, and returns the imputed matrix obtained by different algorithms and the number of missing values.
+
+```{r,eval=TRUE}
+library(finalwork)
+library(fbi)
+compare_method<-function(N,P,Nm,Pm,itermax,R2,types='poisson',details="no intercept"){
+  #generate a list to reserve the result of each iter
+  #list[[iter]] contains X_true,missnum,X_complete for three methods
+  result<-list()
+  for(iter in 1:itermax){
+    if(types=="poisson"){
+      if(details=="no intercept"){
+        #generate data matrix and artificially
+        #creating missing values
+        X_true<-DGP1(N,P,R2)
+        X_true_miss<-DGP_miss(Nm,Pm,X_true)
+        missnum<-sum(is.na(X_true_miss))
+        ##GFM-TW
+        X_complete_GFMTW<-GFM_TW(X_true_miss,R2+2,types,details)
+        ##TW-sd
+        X_complete_TWsd<-tw_apc(X_true_miss,R2+2,center=TRUE,standardize = TRUE,re_estimate = TRUE)$data
+        X_complete_TWsd<-round(X_complete_TWsd)
+        ##TW-raw
+        X_complete_TWraw<-tw_apc(X_true_miss,R2+2,center=FALSE,standardize = FALSE,re_estimate = TRUE)$data
+        X_complete_TWraw<-round(X_complete_TWraw)
+      }
+      if(details=="intercept"){
+        X_true<-DGP2(N,P,R2)
+        X_true_miss<-DGP_miss(Nm,Pm,X_true)
+        missnum<-sum(is.na(X_true_miss))
+        ##GFM-TW
+        X_complete_GFMTW<-GFM_TW(X_true_miss,R2,types,details)
+        ##TW-sd
+        X_complete_TWsd<-tw_apc(X_true_miss,R2,center=TRUE,standardize = TRUE,re_estimate = TRUE)$data
+        X_complete_TWsd<-round(X_complete_TWsd)
+        ##TW-raw
+        X_complete_TWraw<-tw_apc(X_true_miss,R2,center=FALSE,standardize = FALSE,re_estimate = TRUE)$data
+        X_complete_TWraw<-round(X_complete_TWraw)
+      }
+    }
+    #reserve results
+    result[[iter]]<-list(X_true=X_true,missnum=missnum,
+                         X_complete_GFMTW=X_complete_GFMTW,
+                         X_complete_TWsd=X_complete_TWsd,
+                       X_complete_TWraw=X_complete_TWraw)
+  }
+  return(result)
+}
+```
+
+The following newly defined function reports the RMSE result.    
+
+```{r,eval=TRUE}
+library(finalwork)
+report_RMSE<-function(res,iternum){
+  RMSE_result<-matrix(0,nrow=iternum,ncol=3)
+  for(iter in 1:iternum){
+  RMSE_result[iter,1]<-RMSEC(res[[iter]]$X_complete_GFMTW,res[[iter]]$X_true,res[[iter]]$missnum)
+  RMSE_result[iter,2]<-RMSEC(res[[iter]]$X_complete_TWsd,res[[iter]]$X_true,res[[iter]]$missnum)
+  RMSE_result[iter,3]<-RMSEC(res[[iter]]$X_complete_TWraw,res[[iter]]$X_true,res[[iter]]$missnum)
+  }
+  return(RMSE_result)
+}
+```
+
+## Examples
+
+### Example1   
+
+In this example, we simulate the whole process of missing completion of Poisson data without intercepts. The reported matrix is a $M \times 3$ matrix, where $M$ is the iteration number.
+
+```{r,eval=TRUE}
+#setting
+library(finalwork)
+library(fbi)
+iter1=10
+N1=200;P1=300;R1=1;Nm1<-80;Pm1<-80
+#simulation
+result1<-compare_method(N1,P1,Nm1,Pm1,iter1,R1,'poisson','no intercept')
+
+#report
+report_result<-report_RMSE(result1,iter1)
+report_result
+```
+
+### Example2   
+
+In this example, we simulate the whole process of missing completion of Poisson data with intercepts. The reported matrix is a $M \times 3$ matrix, where $M$ is the iteration number.
+
+```{r,eval=TRUE}
+#setting
+iter2=10
+N2=200;P2=300;R=3;Nm2<-80;Pm2<-80
+#simulation
+result1<-compare_method(N2,P2,Nm2,Pm2,iter2,R,'poisson','intercept')
+#report
+report_result<-report_RMSE(result1,iter2)
+report_result
+```
